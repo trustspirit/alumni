@@ -3,14 +3,9 @@ import { useState, useCallback } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Container, Button } from '@/components/common';
+import { Container, Button, Input } from '@/components/common';
 import { useAuth } from '@/hooks/useAuth';
 import { createUserProfile } from '@/lib/firestore';
-import { cn } from '@/lib/cn';
-
-function sanitizeInput(value: string): string {
-  return value.replace(/[<>]/g, '');
-}
 
 function isValidEmail(email: string): boolean {
   return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
@@ -76,7 +71,7 @@ export default function ProfileSetupPage() {
   }, [formData, t]);
 
   const handleChange = useCallback((field: string, value: string) => {
-    const formatted = field === 'phone' ? formatPhoneNumber(value) : sanitizeInput(value);
+    const formatted = field === 'phone' ? formatPhoneNumber(value) : value;
     setFormData(prev => ({ ...prev, [field]: formatted }));
     setErrors(prev => ({ ...prev, [field]: '' }));
   }, []);
@@ -143,26 +138,19 @@ export default function ProfileSetupPage() {
               {t('profile.required')}
             </h2>
             {requiredFields.map(({ field, label, type, placeholder }) => (
-              <div key={field}>
-                <label htmlFor={field} className="mb-2 block text-sm font-medium text-text-primary">
-                  {label} <span className="text-byuh-crimson">*</span>
-                </label>
-                <input
-                  id={field}
-                  type={type}
-                  value={formData[field as keyof typeof formData]}
-                  onChange={(e) => handleChange(field, e.target.value)}
-                  placeholder={placeholder}
-                  className={cn(
-                    'w-full rounded-lg border px-4 py-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-byuh-crimson',
-                    errors[field] ? 'border-red-500' : 'border-gray-300',
-                  )}
-                  maxLength={100}
-                />
-                {errors[field] && (
-                  <p className="mt-1 text-sm text-red-500">{errors[field]}</p>
-                )}
-              </div>
+              <Input
+                key={field}
+                id={field}
+                type={type}
+                label={label}
+                required
+                value={formData[field as keyof typeof formData]}
+                onChange={(v) => handleChange(field, v)}
+                placeholder={placeholder}
+                error={errors[field]}
+                maxLength={100}
+                className="px-4 py-3"
+              />
             ))}
           </div>
 
@@ -171,20 +159,17 @@ export default function ProfileSetupPage() {
               {t('profile.optional')}
             </h2>
             {optionalFields.map(({ field, label, type, placeholder }) => (
-              <div key={field}>
-                <label htmlFor={field} className="mb-2 block text-sm font-medium text-text-primary">
-                  {label}
-                </label>
-                <input
-                  id={field}
-                  type={type}
-                  value={formData[field as keyof typeof formData]}
-                  onChange={(e) => handleChange(field, e.target.value)}
-                  placeholder={placeholder}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-byuh-crimson"
-                  maxLength={200}
-                />
-              </div>
+              <Input
+                key={field}
+                id={field}
+                type={type}
+                label={label}
+                value={formData[field as keyof typeof formData]}
+                onChange={(v) => handleChange(field, v)}
+                placeholder={placeholder}
+                maxLength={200}
+                className="px-4 py-3"
+              />
             ))}
           </div>
 

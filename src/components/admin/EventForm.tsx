@@ -1,23 +1,18 @@
 import { useState, useCallback } from 'react';
 import type { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/common';
+import { Button, Input, Textarea } from '@/components/common';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useAuth } from '@/hooks/useAuth';
 import { UPLOAD_LIMITS } from '@/constants';
 import { Timestamp } from 'firebase/firestore';
 import type { Event } from '@/types';
-import { cn } from '@/lib/cn';
 
 interface EventFormProps {
   event?: Event;
   onSubmit: (data: Omit<Event, 'id' | 'attendees' | 'createdAt' | 'updatedAt'>) => void;
   onCancel: () => void;
   submitting?: boolean;
-}
-
-function sanitizeInput(value: string): string {
-  return value.replace(/[<>]/g, '').trim();
 }
 
 export function EventForm({ event, onSubmit, onCancel, submitting = false }: EventFormProps) {
@@ -36,7 +31,7 @@ export function EventForm({ event, onSubmit, onCancel, submitting = false }: Eve
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = useCallback((field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: sanitizeInput(value) }));
+    setFormData(prev => ({ ...prev, [field]: value }));
     setErrors(prev => ({ ...prev, [field]: '' }));
   }, []);
 
@@ -78,36 +73,25 @@ export function EventForm({ event, onSubmit, onCancel, submitting = false }: Eve
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       {fields.map(({ field, label, type }) => (
-        <div key={field}>
-          <label htmlFor={`event-${field}`} className="mb-1 block text-sm font-medium">{label}</label>
-          <input
-            id={`event-${field}`}
-            type={type}
-            value={formData[field as keyof typeof formData]}
-            onChange={(e) => handleChange(field, e.target.value)}
-            className={cn(
-              'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-byuh-crimson',
-              errors[field] ? 'border-red-500' : 'border-gray-300',
-            )}
-          />
-          {errors[field] && <p className="mt-1 text-xs text-red-500">{errors[field]}</p>}
-        </div>
+        <Input
+          key={field}
+          id={`event-${field}`}
+          type={type}
+          label={label}
+          value={formData[field as keyof typeof formData]}
+          onChange={(v) => handleChange(field, v)}
+          error={errors[field]}
+        />
       ))}
 
-      <div>
-        <label htmlFor="event-description" className="mb-1 block text-sm font-medium">{t('events.description')}</label>
-        <textarea
-          id="event-description"
-          value={formData.description}
-          onChange={(e) => handleChange('description', e.target.value)}
-          rows={3}
-          className={cn(
-            'w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-byuh-crimson',
-            errors.description ? 'border-red-500' : 'border-gray-300',
-          )}
-        />
-        {errors.description && <p className="mt-1 text-xs text-red-500">{errors.description}</p>}
-      </div>
+      <Textarea
+        id="event-description"
+        label={t('events.description')}
+        value={formData.description}
+        onChange={(v) => handleChange('description', v)}
+        rows={3}
+        error={errors.description}
+      />
 
       <div>
         <label htmlFor="event-image" className="mb-1 block text-sm font-medium">{t('events.image')}</label>

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/common';
+import { Button, Input } from '@/components/common';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useAuth } from '@/hooks/useAuth';
 import { UPLOAD_LIMITS } from '@/constants';
@@ -8,10 +8,6 @@ import { UPLOAD_LIMITS } from '@/constants';
 interface GalleryUploaderProps {
   onUpload: (data: { src: string; storagePath: string; alt: string; category: string; uploadedBy: string }) => void;
   submitting?: boolean;
-}
-
-function sanitizeInput(value: string): string {
-  return value.replace(/[<>]/g, '').trim();
 }
 
 export function GalleryUploader({ onUpload, submitting = false }: GalleryUploaderProps) {
@@ -24,7 +20,6 @@ export function GalleryUploader({ onUpload, submitting = false }: GalleryUploade
   const [uploadResult, setUploadResult] = useState<{ url: string; storagePath: string } | null>(null);
   const previewUrlRef = useRef<string | null>(null);
 
-  // Revoke object URL on unmount or when previewUrl changes
   useEffect(() => {
     return () => {
       if (previewUrlRef.current) {
@@ -37,7 +32,6 @@ export function GalleryUploader({ onUpload, submitting = false }: GalleryUploade
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Revoke old preview URL before creating new one
     if (previewUrlRef.current) {
       URL.revokeObjectURL(previewUrlRef.current);
     }
@@ -54,8 +48,8 @@ export function GalleryUploader({ onUpload, submitting = false }: GalleryUploade
     onUpload({
       src: uploadResult.url,
       storagePath: uploadResult.storagePath,
-      alt: sanitizeInput(alt),
-      category: sanitizeInput(category),
+      alt: alt.trim(),
+      category: category.trim(),
       uploadedBy: user.uid,
     });
     setAlt('');
@@ -84,20 +78,16 @@ export function GalleryUploader({ onUpload, submitting = false }: GalleryUploade
         {previewUrl && (
           <img src={previewUrl} alt={t('events.preview')} className="h-32 w-full rounded-lg object-cover" />
         )}
-        <input
-          type="text"
+        <Input
           placeholder={t('gallery.photoAlt')}
           value={alt}
-          onChange={(e) => setAlt(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-byuh-crimson"
+          onChange={setAlt}
           maxLength={200}
         />
-        <input
-          type="text"
+        <Input
           placeholder={t('gallery.category')}
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-byuh-crimson"
+          onChange={setCategory}
           maxLength={50}
         />
         <Button

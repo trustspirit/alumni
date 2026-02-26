@@ -1,5 +1,6 @@
 export { Container } from './Container';
 export { Button } from './Button';
+export { Input, Textarea } from './Input';
 export { Card } from './Card';
 export { SectionHeading } from './SectionHeading';
 export { ExternalLink } from './ExternalLink';
