@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { getUserProfile } from '@/lib/firestore';
+import { getUserProfile, updateUserProfile } from '@/lib/firestore';
 import { signInWithGoogle, signOut } from '@/lib/auth';
 import type { UserProfile, UserRole } from '@/types';
 
@@ -28,6 +28,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const p = await getUserProfile(firebaseUser.uid);
+        // Sync Google photo if profile exists but has no custom photo
+        if (p && !p.profileImageUrl && firebaseUser.photoURL) {
+          await updateUserProfile(firebaseUser.uid, { profileImageUrl: firebaseUser.photoURL });
+          p.profileImageUrl = firebaseUser.photoURL;
+        }
         setUser(firebaseUser);
         setProfile(p);
       } else {
