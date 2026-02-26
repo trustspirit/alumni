@@ -53,6 +53,7 @@
     "newEvent": "New Event",
     "eventTitle": "Title",
     "date": "Date",
+    "time": "Time",
     "location": "Location",
     "description": "Description",
     "image": "Image",

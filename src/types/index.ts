@@ -36,6 +36,7 @@ export interface Event {
   id: string;
   title: string;
   date: Timestamp;
+  time?: string;
   location: string;
   description: string;
   imageUrl: string;

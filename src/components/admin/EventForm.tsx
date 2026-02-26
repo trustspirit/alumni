@@ -24,6 +24,7 @@ export function EventForm({ event, onSubmit, onCancel, submitting = false }: Eve
   const [formData, setFormData] = useState({
     title: event?.title || '',
     date: event?.date ? event.date.toDate().toISOString().split('T')[0] : '',
+    time: event?.time || '',
     location: event?.location || '',
     description: event?.description || '',
     imageUrl: event?.imageUrl || '',
@@ -57,6 +58,7 @@ export function EventForm({ event, onSubmit, onCancel, submitting = false }: Eve
     onSubmit({
       title: formData.title,
       date: Timestamp.fromDate(new Date(formData.date)),
+      ...(formData.time && { time: formData.time }),
       location: formData.location,
       description: formData.description,
       imageUrl: formData.imageUrl || '/images/placeholder.svg',
@@ -75,14 +77,23 @@ export function EventForm({ event, onSubmit, onCancel, submitting = false }: Eve
         onChange={(v) => handleChange('title', v)}
         error={errors.title}
       />
-      <Input
-        id="event-date"
-        type="date"
-        label={t('events.date')}
-        value={formData.date}
-        onChange={(v) => handleChange('date', v)}
-        error={errors.date}
-      />
+      <div className="grid grid-cols-2 gap-3">
+        <Input
+          id="event-date"
+          type="date"
+          label={t('events.date')}
+          value={formData.date}
+          onChange={(v) => handleChange('date', v)}
+          error={errors.date}
+        />
+        <Input
+          id="event-time"
+          type="time"
+          label={t('events.time')}
+          value={formData.time}
+          onChange={(v) => handleChange('time', v)}
+        />
+      </div>
       <Input
         id="event-location"
         type="text"

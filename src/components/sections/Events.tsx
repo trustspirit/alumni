@@ -57,7 +57,7 @@ export const Events = memo(function Events({ limit = 3, showRsvp = false }: Even
                   title={event.title}
                   description={event.description}
                   imageUrl={event.imageUrl}
-                  meta={`${formatDate(event.date, i18n.language)} · ${event.location}`}
+                  meta={`${formatDate(event.date, i18n.language)}${event.time ? ` ${event.time}` : ''} · ${event.location}`}
                 />
                 {showRsvp && (
                   <>
