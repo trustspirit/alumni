@@ -24,6 +24,7 @@ const AdminEvents = lazy(() => import('@/pages/admin/AdminEvents'));
 const AdminNews = lazy(() => import('@/pages/admin/AdminNews'));
 const AdminGallery = lazy(() => import('@/pages/admin/AdminGallery'));
 const AdminMembers = lazy(() => import('@/pages/admin/AdminMembers'));
+const AdminLeadership = lazy(() => import('@/pages/admin/AdminLeadership'));
 
 function PageLoader() {
   return <LoadingSpinner size="lg" className="min-h-[50vh]" />;
@@ -184,6 +185,18 @@ export default function App() {
                     <RoleGuard roles={['admin']}>
                       <Suspense fallback={<PageLoader />}>
                         <AdminMembers />
+                      </Suspense>
+                    </RoleGuard>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/leadership"
+                element={
+                  <ProtectedRoute>
+                    <RoleGuard roles={['admin', 'manager']}>
+                      <Suspense fallback={<PageLoader />}>
+                        <AdminLeadership />
                       </Suspense>
                     </RoleGuard>
                   </ProtectedRoute>

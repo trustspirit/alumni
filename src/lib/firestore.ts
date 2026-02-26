@@ -1,9 +1,10 @@
 import {
   collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, deleteField,
-  query, orderBy, where, Timestamp, arrayUnion, arrayRemove, setDoc,
+  query, orderBy, Timestamp, arrayUnion, arrayRemove, setDoc,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { UserProfile, Event, NewsItem, GalleryImage, UserRole } from '@/types';
+import { writeBatch } from 'firebase/firestore';
+import type { UserProfile, Event, NewsItem, GalleryImage, LeadershipEntry, UserRole } from '@/types';
 
 // ---- Users ----
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
@@ -24,9 +25,30 @@ export async function updateUserProfile(uid: string, data: Omit<Partial<UserProf
   await updateDoc(doc(db, 'users', uid), { ...data, updatedAt: Timestamp.now() });
 }
 
-export async function getLeadership(): Promise<UserProfile[]> {
-  const snap = await getDocs(query(collection(db, 'users'), where('role', 'in', ['admin', 'manager']), orderBy('name')));
-  return snap.docs.map(d => ({ uid: d.id, ...d.data() }) as UserProfile);
+// ---- Leadership ----
+export async function getLeadershipEntries(): Promise<LeadershipEntry[]> {
+  const snap = await getDocs(query(collection(db, 'leadership'), orderBy('order')));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }) as LeadershipEntry);
+}
+
+export async function addLeadershipEntry(data: Omit<LeadershipEntry, 'id' | 'createdAt'>) {
+  return addDoc(collection(db, 'leadership'), { ...data, createdAt: Timestamp.now() });
+}
+
+export async function updateLeadershipEntry(id: string, data: Partial<LeadershipEntry>) {
+  await updateDoc(doc(db, 'leadership', id), data);
+}
+
+export async function deleteLeadershipEntry(id: string) {
+  await deleteDoc(doc(db, 'leadership', id));
+}
+
+export async function reorderLeadership(entries: { id: string; order: number }[]) {
+  const batch = writeBatch(db);
+  for (const entry of entries) {
+    batch.update(doc(db, 'leadership', entry.id), { order: entry.order });
+  }
+  await batch.commit();
 }
 
 export async function getAllUsers(): Promise<UserProfile[]> {

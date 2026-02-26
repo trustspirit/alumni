@@ -14,6 +14,7 @@ export default function AdminDashboard() {
     { to: '/admin/events', label: t('admin.manageEvents'), icon: '📅' },
     { to: '/admin/news', label: t('admin.manageNews'), icon: '📰' },
     { to: '/admin/gallery', label: t('admin.manageGallery'), icon: '🖼️' },
+    { to: '/admin/leadership', label: t('admin.manageLeadership'), icon: '⭐' },
     { to: '/admin/members', label: t('admin.manageMembers'), icon: '👥' },
   ];
 

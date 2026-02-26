@@ -200,6 +200,20 @@
       "roleManager": "Manager",
       "roleMember": "Member"
     },
+    "manageLeadership": "Leadership",
+    "leadership": {
+      "title": "Leadership Management",
+      "add": "Add Leader",
+      "edit": "Edit Leader",
+      "empty": "No leadership members registered.",
+      "selectMember": "Select Member",
+      "chooseMember": "Choose a member",
+      "leaderTitle": "Title",
+      "titlePlaceholder": "e.g., President, Vice President",
+      "description": "Description",
+      "descPlaceholder": "Enter a brief introduction",
+      "confirmDelete": "Are you sure you want to remove this leader?"
+    },
     "confirmDeleteEvent": "Are you sure you want to delete this event?",
     "confirmDeleteNews": "Are you sure you want to delete this article?",
     "confirmDeleteImage": "Are you sure you want to delete this photo?",

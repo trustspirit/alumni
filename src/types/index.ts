@@ -25,11 +25,13 @@ export interface NavItem {
   requiredRole?: UserRole;
 }
 
-export interface LeadershipMember {
-  name: string;
-  role: string;
-  imageUrl: string;
-  bio?: string;
+export interface LeadershipEntry {
+  id: string;
+  uid: string;
+  title: string;
+  description: string;
+  order: number;
+  createdAt: Timestamp;
 }
 
 export interface Event {

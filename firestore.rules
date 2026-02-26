@@ -66,5 +66,11 @@ service cloud.firestore {
       allow read: if true;
       allow create, delete: if isManager();
     }
+
+    // Leadership collection
+    match /leadership/{entryId} {
+      allow read: if true;
+      allow create, update, delete: if isManager();
+    }
   }
 }

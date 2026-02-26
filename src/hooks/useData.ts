@@ -4,10 +4,11 @@ import {
   getEvents, createEvent, updateEvent, deleteEvent, rsvpEvent,
   getNews, createNews, updateNews, deleteNews,
   getGalleryImages, createGalleryImage, deleteGalleryImage,
-  getLeadership, getAllUsers, updateUserRole,
+  getLeadershipEntries, addLeadershipEntry, updateLeadershipEntry, deleteLeadershipEntry, reorderLeadership,
+  getAllUsers, updateUserRole,
 } from '@/lib/firestore';
 import { mainNavItems } from '@/data/navigation';
-import type { Event, NewsItem, GalleryImage, UserRole } from '@/types';
+import type { Event, NewsItem, GalleryImage, LeadershipEntry, UserRole } from '@/types';
 
 // ---- Navigation ----
 export function useNavigation() {
@@ -118,15 +119,48 @@ export function useDeleteGalleryImage() {
   });
 }
 
-// ---- Users ----
+// ---- Leadership ----
 export function useLeadership() {
   return useQuery({
     queryKey: ['leadership'],
-    queryFn: getLeadership,
+    queryFn: getLeadershipEntries,
     staleTime: STALE_TIMES.moderate,
   });
 }
 
+export function useAddLeadership() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Omit<LeadershipEntry, 'id' | 'createdAt'>) => addLeadershipEntry(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['leadership'] }),
+  });
+}
+
+export function useUpdateLeadership() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<LeadershipEntry> }) => updateLeadershipEntry(id, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['leadership'] }),
+  });
+}
+
+export function useDeleteLeadership() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteLeadershipEntry(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['leadership'] }),
+  });
+}
+
+export function useReorderLeadership() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (entries: { id: string; order: number }[]) => reorderLeadership(entries),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['leadership'] }),
+  });
+}
+
+// ---- Users ----
 export function useAllUsers() {
   return useQuery({
     queryKey: ['users'],
