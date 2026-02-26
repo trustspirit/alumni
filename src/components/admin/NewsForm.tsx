@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import type { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Input, Textarea } from '@/components/common';
@@ -18,7 +18,8 @@ interface NewsFormProps {
 export function NewsForm({ news, onSubmit, onCancel, submitting = false }: NewsFormProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { upload, uploading } = useImageUpload();
+  const { upload, uploading, error: uploadError } = useImageUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     title: news?.title || '',
@@ -103,16 +104,25 @@ export function NewsForm({ news, onSubmit, onCancel, submitting = false }: NewsF
       />
 
       <div>
-        <label htmlFor="news-image" className="mb-1 block text-sm font-medium">{t('news.image')}</label>
+        <label htmlFor="news-image" className="mb-1 block text-sm font-medium text-text-primary">{t('news.image')}</label>
         <input
+          ref={fileInputRef}
           id="news-image"
           type="file"
           accept="image/jpeg,image/png,image/webp"
           onChange={handleImageUpload}
-          className="w-full text-sm"
+          className="hidden"
           disabled={uploading}
         />
-        {uploading && <p className="mt-1 text-xs text-text-secondary">{t('events.uploading')}</p>}
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-text-secondary transition-colors hover:border-byuh-crimson hover:text-byuh-crimson disabled:opacity-50"
+        >
+          {uploading ? t('events.uploading') : t('events.chooseFile')}
+        </button>
+        {uploadError && <p className="mt-1 text-xs text-red-500">{uploadError}</p>}
         {formData.imageUrl && (
           <img src={formData.imageUrl} alt={t('events.preview')} className="mt-2 h-32 w-full rounded-lg object-cover" />
         )}

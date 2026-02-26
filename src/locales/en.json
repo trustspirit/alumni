@@ -56,9 +56,11 @@
     "location": "Location",
     "description": "Description",
     "image": "Image",
+    "chooseFile": "Choose File",
     "uploading": "Uploading...",
     "preview": "Preview",
     "saving": "Saving...",
+    "locationPlaceholder": "e.g., 123 Main St, Seoul, Korea",
     "attendeeCount": "Attendees",
     "manage": "Manage",
     "validation": {

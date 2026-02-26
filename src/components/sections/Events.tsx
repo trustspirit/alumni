@@ -14,6 +14,10 @@ function formatDate(ts: Timestamp, locale: string): string {
   });
 }
 
+function getMapEmbedUrl(location: string): string {
+  return `https://www.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
+}
+
 interface EventsSectionProps {
   limit?: number;
   showRsvp?: boolean;
@@ -55,20 +59,34 @@ export const Events = memo(function Events({ limit = 3, showRsvp = false }: Even
                   imageUrl={event.imageUrl}
                   meta={`${formatDate(event.date, i18n.language)} · ${event.location}`}
                 />
-                {showRsvp && user && (
-                  <div className="mt-2 text-center">
-                    <Button
-                      variant={isAttending ? 'outline' : 'primary'}
-                      size="sm"
-                      onClick={() => handleRsvp(event.id, !isAttending)}
-                      disabled={rsvpMutation.isPending}
-                    >
-                      {isAttending ? t('events.cancelRsvp') : t('events.rsvp')}
-                    </Button>
-                    <span className="ml-2 text-sm text-text-secondary">
-                      {t('events.attendees', { count: event.attendees.length })}
-                    </span>
-                  </div>
+                {showRsvp && (
+                  <>
+                    <div className="mt-3 overflow-hidden rounded-lg">
+                      <iframe
+                        title={`Map: ${event.location}`}
+                        src={getMapEmbedUrl(event.location)}
+                        className="h-48 w-full border-0"
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        allowFullScreen
+                      />
+                    </div>
+                    {user && (
+                      <div className="mt-2 text-center">
+                        <Button
+                          variant={isAttending ? 'outline' : 'primary'}
+                          size="sm"
+                          onClick={() => handleRsvp(event.id, !isAttending)}
+                          disabled={rsvpMutation.isPending}
+                        >
+                          {isAttending ? t('events.cancelRsvp') : t('events.rsvp')}
+                        </Button>
+                        <span className="ml-2 text-sm text-text-secondary">
+                          {t('events.attendees', { count: event.attendees.length })}
+                        </span>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             );

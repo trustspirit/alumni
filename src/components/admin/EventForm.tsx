@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import type { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Input, Textarea } from '@/components/common';
@@ -18,7 +18,8 @@ interface EventFormProps {
 export function EventForm({ event, onSubmit, onCancel, submitting = false }: EventFormProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { upload, uploading } = useImageUpload();
+  const { upload, uploading, error: uploadError } = useImageUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     title: event?.title || '',
@@ -64,25 +65,33 @@ export function EventForm({ event, onSubmit, onCancel, submitting = false }: Eve
     });
   }, [formData, onSubmit, user, t]);
 
-  const fields = [
-    { field: 'title', label: t('events.eventTitle'), type: 'text' },
-    { field: 'date', label: t('events.date'), type: 'date' },
-    { field: 'location', label: t('events.location'), type: 'text' },
-  ];
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-      {fields.map(({ field, label, type }) => (
-        <Input
-          key={field}
-          id={`event-${field}`}
-          type={type}
-          label={label}
-          value={formData[field as keyof typeof formData]}
-          onChange={(v) => handleChange(field, v)}
-          error={errors[field]}
-        />
-      ))}
+      <Input
+        id="event-title"
+        type="text"
+        label={t('events.eventTitle')}
+        value={formData.title}
+        onChange={(v) => handleChange('title', v)}
+        error={errors.title}
+      />
+      <Input
+        id="event-date"
+        type="date"
+        label={t('events.date')}
+        value={formData.date}
+        onChange={(v) => handleChange('date', v)}
+        error={errors.date}
+      />
+      <Input
+        id="event-location"
+        type="text"
+        label={t('events.location')}
+        value={formData.location}
+        onChange={(v) => handleChange('location', v)}
+        error={errors.location}
+        placeholder={t('events.locationPlaceholder')}
+      />
 
       <Textarea
         id="event-description"
@@ -94,16 +103,28 @@ export function EventForm({ event, onSubmit, onCancel, submitting = false }: Eve
       />
 
       <div>
-        <label htmlFor="event-image" className="mb-1 block text-sm font-medium">{t('events.image')}</label>
+        <label htmlFor="event-image" className="mb-1 block text-sm font-medium text-text-primary">
+          {t('events.image')}
+          <span className="ml-1 text-xs font-normal text-text-secondary">(max 600KB)</span>
+        </label>
         <input
+          ref={fileInputRef}
           id="event-image"
           type="file"
           accept="image/jpeg,image/png,image/webp"
           onChange={handleImageUpload}
-          className="w-full text-sm"
+          className="hidden"
           disabled={uploading}
         />
-        {uploading && <p className="mt-1 text-xs text-text-secondary">{t('events.uploading')}</p>}
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-text-secondary transition-colors hover:border-byuh-crimson hover:text-byuh-crimson disabled:opacity-50"
+        >
+          {uploading ? t('events.uploading') : t('events.chooseFile')}
+        </button>
+        {uploadError && <p className="mt-1 text-xs text-red-500">{uploadError}</p>}
         {formData.imageUrl && (
           <img src={formData.imageUrl} alt={t('events.preview')} className="mt-2 h-32 w-full rounded-lg object-cover" />
         )}

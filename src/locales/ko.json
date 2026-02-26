@@ -56,9 +56,11 @@
     "location": "장소",
     "description": "설명",
     "image": "이미지",
+    "chooseFile": "파일 선택",
     "uploading": "업로드 중...",
     "preview": "미리보기",
     "saving": "저장 중...",
+    "locationPlaceholder": "예: 서울특별시 강남구 테헤란로 123",
     "attendeeCount": "참석자",
     "manage": "관리",
     "validation": {

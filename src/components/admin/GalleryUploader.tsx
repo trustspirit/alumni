@@ -14,6 +14,7 @@ export function GalleryUploader({ onUpload, submitting = false }: GalleryUploade
   const { t } = useTranslation();
   const { user } = useAuth();
   const { upload, uploading, error: uploadError } = useImageUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [alt, setAlt] = useState('');
   const [category, setCategory] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -66,15 +67,25 @@ export function GalleryUploader({ onUpload, submitting = false }: GalleryUploade
     <div className="rounded-xl bg-white p-6 shadow-sm">
       <h3 className="mb-4 font-heading text-lg font-semibold">{t('gallery.uploadTitle')}</h3>
       <div className="space-y-4">
-        <input
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          onChange={handleFileChange}
-          className="w-full text-sm"
-          disabled={uploading}
-        />
-        {uploading && <p className="text-xs text-text-secondary">{t('events.uploading')}</p>}
-        {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
+        <div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleFileChange}
+            className="hidden"
+            disabled={uploading}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-text-secondary transition-colors hover:border-byuh-crimson hover:text-byuh-crimson disabled:opacity-50"
+          >
+            {uploading ? t('events.uploading') : t('events.chooseFile')}
+          </button>
+          {uploadError && <p className="mt-1 text-xs text-red-500">{uploadError}</p>}
+        </div>
         {previewUrl && (
           <img src={previewUrl} alt={t('events.preview')} className="h-32 w-full rounded-lg object-cover" />
         )}
