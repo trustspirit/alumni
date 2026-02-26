@@ -1,0 +1,103 @@
+import {
+  collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
+  query, orderBy, Timestamp, arrayUnion, arrayRemove, setDoc,
+} from 'firebase/firestore';
+import { db } from './firebase';
+import type { UserProfile, Event, NewsItem, GalleryImage, UserRole } from '@/types';
+
+// ---- Users ----
+export async function getUserProfile(uid: string): Promise<UserProfile | null> {
+  const snap = await getDoc(doc(db, 'users', uid));
+  return snap.exists() ? { uid: snap.id, ...snap.data() } as UserProfile : null;
+}
+
+export async function createUserProfile(uid: string, data: Omit<UserProfile, 'uid' | 'role' | 'createdAt' | 'updatedAt'>) {
+  await setDoc(doc(db, 'users', uid), {
+    ...data,
+    role: 'member' as UserRole,
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
+  });
+}
+
+export async function updateUserProfile(uid: string, data: Omit<Partial<UserProfile>, 'role' | 'uid' | 'createdAt'>) {
+  await updateDoc(doc(db, 'users', uid), { ...data, updatedAt: Timestamp.now() });
+}
+
+export async function getAllUsers(): Promise<UserProfile[]> {
+  const snap = await getDocs(query(collection(db, 'users'), orderBy('name')));
+  return snap.docs.map(d => ({ uid: d.id, ...d.data() }) as UserProfile);
+}
+
+export async function updateUserRole(uid: string, role: UserRole) {
+  await updateDoc(doc(db, 'users', uid), { role, updatedAt: Timestamp.now() });
+}
+
+// ---- Events ----
+export async function getEvents(): Promise<Event[]> {
+  const snap = await getDocs(query(collection(db, 'events'), orderBy('date', 'desc')));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }) as Event);
+}
+
+export async function createEvent(data: Omit<Event, 'id' | 'attendees' | 'createdAt' | 'updatedAt'>) {
+  return addDoc(collection(db, 'events'), {
+    ...data,
+    attendees: [],
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
+  });
+}
+
+export async function updateEvent(id: string, data: Partial<Event>) {
+  await updateDoc(doc(db, 'events', id), { ...data, updatedAt: Timestamp.now() });
+}
+
+export async function deleteEvent(id: string) {
+  await deleteDoc(doc(db, 'events', id));
+}
+
+export async function rsvpEvent(eventId: string, uid: string, attending: boolean) {
+  const ref = doc(db, 'events', eventId);
+  await updateDoc(ref, {
+    attendees: attending ? arrayUnion(uid) : arrayRemove(uid),
+  });
+}
+
+// ---- News ----
+export async function getNews(): Promise<NewsItem[]> {
+  const snap = await getDocs(query(collection(db, 'news'), orderBy('date', 'desc')));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }) as NewsItem);
+}
+
+export async function createNews(data: Omit<NewsItem, 'id' | 'createdAt' | 'updatedAt'>) {
+  return addDoc(collection(db, 'news'), {
+    ...data,
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
+  });
+}
+
+export async function updateNews(id: string, data: Partial<NewsItem>) {
+  await updateDoc(doc(db, 'news', id), { ...data, updatedAt: Timestamp.now() });
+}
+
+export async function deleteNews(id: string) {
+  await deleteDoc(doc(db, 'news', id));
+}
+
+// ---- Gallery ----
+export async function getGalleryImages(): Promise<GalleryImage[]> {
+  const snap = await getDocs(query(collection(db, 'gallery'), orderBy('createdAt', 'desc')));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }) as GalleryImage);
+}
+
+export async function createGalleryImage(data: Omit<GalleryImage, 'id' | 'createdAt'>) {
+  return addDoc(collection(db, 'gallery'), {
+    ...data,
+    createdAt: Timestamp.now(),
+  });
+}
+
+export async function deleteGalleryImage(id: string) {
+  await deleteDoc(doc(db, 'gallery', id));
+}

@@ -1,0 +1,199 @@
+{
+  "common": {
+    "viewMore": "View More",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "noResults": "No results found.",
+    "confirm": "Confirm"
+  },
+  "nav": {
+    "about": "About",
+    "events": "Events",
+    "news": "News",
+    "gallery": "Gallery",
+    "directory": "Directory",
+    "give": "Give",
+    "contact": "Contact",
+    "admin": "Admin",
+    "login": "Sign In",
+    "logout": "Sign Out",
+    "profile": "Profile",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "hero": {
+    "title1": "BYU-Hawaii",
+    "title2": "Alumni Korea Chapter",
+    "subtitle": "Welcome to the BYU-Hawaii Alumni Korea Chapter. Connect, share, and grow together.",
+    "joinBtn": "Join Alumni",
+    "eventsBtn": "View Events"
+  },
+  "about": {
+    "title": "About Korea Chapter",
+    "subtitle": "A community of alumni who love BYUH",
+    "description": "BYU-Hawaii Alumni Korea Chapter is a community where BYUH alumni in Korea connect, support each other, and carry on the values of BYUH. We strengthen alumni bonds through regular meetups, networking events, and service activities.",
+    "detailP1": "BYU-Hawaii Alumni Korea Chapter is the official alumni community for BYUH graduates residing in Korea, connecting and supporting each other while carrying on BYUH values.",
+    "detailP2": "We strengthen alumni bonds and support current students through regular meetups, networking events, volunteer activities, and mentoring programs.",
+    "leadership": "Leadership",
+    "roleAdmin": "Administrator",
+    "roleManager": "Manager"
+  },
+  "events": {
+    "title": "Upcoming Events",
+    "subtitle": "Special moments with fellow alumni",
+    "rsvp": "RSVP",
+    "cancelRsvp": "Cancel RSVP",
+    "attendees": "{{count}} attending",
+    "manageTitle": "Event Management",
+    "newEvent": "New Event",
+    "eventTitle": "Title",
+    "date": "Date",
+    "location": "Location",
+    "description": "Description",
+    "image": "Image",
+    "uploading": "Uploading...",
+    "preview": "Preview",
+    "saving": "Saving...",
+    "attendeeCount": "Attendees",
+    "manage": "Manage",
+    "validation": {
+      "titleRequired": "Please enter a title.",
+      "dateRequired": "Please select a date.",
+      "locationRequired": "Please enter a location.",
+      "descriptionRequired": "Please enter a description."
+    }
+  },
+  "news": {
+    "title": "Alumni News",
+    "subtitle": "Latest news from BYUH and Korea Chapter",
+    "manageTitle": "News Management",
+    "newNews": "New Article",
+    "newsTitle": "Title",
+    "date": "Date",
+    "summary": "Summary",
+    "content": "Content",
+    "externalLink": "External Link (optional)",
+    "image": "Image",
+    "saving": "Saving...",
+    "manage": "Manage",
+    "validation": {
+      "titleRequired": "Please enter a title.",
+      "dateRequired": "Please select a date.",
+      "summaryRequired": "Please enter a summary.",
+      "contentRequired": "Please enter the content."
+    }
+  },
+  "gallery": {
+    "title": "Gallery",
+    "subtitle": "Precious moments together",
+    "all": "All",
+    "manageTitle": "Gallery Management",
+    "total": "{{count}} photos",
+    "uploadTitle": "Upload Photo",
+    "photoAlt": "Photo description",
+    "category": "Category (e.g., Event, Campus, Alumni)",
+    "addToGallery": "Add to Gallery",
+    "adding": "Adding..."
+  },
+  "join": {
+    "title": "Join Alumni",
+    "subtitle": "Be part of Korea Chapter",
+    "description": "Sign up easily with your Google account and join the alumni network. Access event RSVP, alumni directory, and more.",
+    "viewProfile": "View My Profile",
+    "signUpGoogle": "Sign Up with Google"
+  },
+  "give": {
+    "title": "Give",
+    "subtitle": "Support future students' dreams",
+    "description": "Your generous donations support BYU-Hawaii Korean student scholarships, chapter events, and alumni program development.",
+    "donateBtn": "Donate"
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Get in touch with Korea Chapter",
+    "email": "Email",
+    "sns": "Social Media"
+  },
+  "footer": {
+    "description": "BYU-Hawaii Alumni Korea Chapter. We appreciate your continued interest and participation.",
+    "quickLinks": "Quick Links",
+    "relatedLinks": "Related Links",
+    "donate": "Donate",
+    "rights": "All rights reserved."
+  },
+  "auth": {
+    "signInGoogle": "Sign in with Google",
+    "signingIn": "Signing in...",
+    "joinNetwork": "Join the alumni network",
+    "signInError": "An error occurred while signing in. Please try again.",
+    "siteName": "BYUH Alumni Korea Chapter"
+  },
+  "profile": {
+    "setup": "Profile Setup",
+    "setupSubtitle": "Please enter your information to join the alumni network",
+    "myProfile": "My Profile",
+    "editSubtitle": "You can edit your profile information",
+    "required": "Required",
+    "optional": "Optional",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "graduationYear": "Graduation Year",
+    "company": "Company",
+    "position": "Position",
+    "linkedIn": "LinkedIn",
+    "complete": "Complete Profile",
+    "update": "Update Profile",
+    "saving": "Saving...",
+    "updated": "Profile updated successfully.",
+    "errorCreate": "An error occurred while creating your profile. Please try again.",
+    "errorUpdate": "An error occurred while updating your profile.",
+    "nameRequired": "Please enter your name",
+    "emailRequired": "Please enter your email",
+    "emailInvalid": "Please enter a valid email address",
+    "phoneRequired": "Please enter your phone number",
+    "phoneInvalid": "Please enter a valid phone number"
+  },
+  "directory": {
+    "title": "Alumni Directory",
+    "subtitle": "{{count}} alumni registered",
+    "searchPlaceholder": "Search by name, company, or graduation year...",
+    "classOf": "Class of {{year}}"
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "dashboardSubtitle": "Manage content and members",
+    "totalMembers": "Total Members",
+    "eventsLabel": "Events",
+    "newsLabel": "News",
+    "galleryLabel": "Gallery",
+    "manageEvents": "Event Management",
+    "manageNews": "News Management",
+    "manageGallery": "Gallery Management",
+    "manageMembers": "Member Management",
+    "members": {
+      "title": "Member Management",
+      "total": "{{count}} members",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "graduationYear": "Grad Year",
+      "role": "Role",
+      "roleAdmin": "Admin",
+      "roleManager": "Manager",
+      "roleMember": "Member"
+    },
+    "confirmDeleteEvent": "Are you sure you want to delete this event?",
+    "confirmDeleteNews": "Are you sure you want to delete this article?",
+    "confirmDeleteImage": "Are you sure you want to delete this photo?",
+    "createEvent": "Create New Event",
+    "editEvent": "Edit Event",
+    "createNews": "Create New Article",
+    "editNews": "Edit Article"
+  }
+}

@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return request.auth.uid == uid;
+    }
+
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && getUserRole() == 'admin';
+    }
+
+    function isManager() {
+      return isSignedIn() && getUserRole() in ['admin', 'manager'];
+    }
+
+    // Users collection
+    match /users/{uid} {
+      // Any signed-in user can read any user profile (for directory)
+      allow read: if isSignedIn();
+
+      // Users can create their own profile
+      allow create: if isSignedIn() && isOwner(uid)
+        && request.resource.data.role == 'member';
+
+      // Users can update their own profile (except role field)
+      // Admins can update any profile including role
+      allow update: if isSignedIn() && (
+        (isOwner(uid) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']))
+        || isAdmin()
+      );
+
+      // Only admins can delete users
+      allow delete: if isAdmin();
+    }
+
+    // Events collection
+    match /events/{eventId} {
+      // Anyone can read events (public)
+      allow read: if true;
+
+      // Managers and admins can create/update/delete events
+      allow create, delete: if isManager();
+
+      // Update: managers can update, OR signed-in users can only modify attendees
+      allow update: if isManager()
+        || (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['attendees']));
+    }
+
+    // News collection
+    match /news/{newsId} {
+      allow read: if true;
+      allow create, update, delete: if isManager();
+    }
+
+    // Gallery collection
+    match /gallery/{imageId} {
+      allow read: if true;
+      allow create, delete: if isManager();
+    }
+  }
+}

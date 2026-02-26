@@ -1,0 +1,101 @@
+name: Deploy to Firebase (Preview)
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  detect-changes:
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    outputs:
+      hosting: ${{ steps.filter.outputs.hosting }}
+      firestore: ${{ steps.filter.outputs.firestore }}
+      storage: ${{ steps.filter.outputs.storage }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            hosting:
+              - 'src/**'
+              - 'public/**'
+              - 'index.html'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'vite.config.ts'
+              - 'tsconfig*.json'
+              - 'tailwind.config.*'
+            firestore:
+              - 'firestore.rules'
+              - 'firestore.indexes.json'
+            storage:
+              - 'storage.rules'
+
+  deploy-hosting-preview:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.hosting == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 23
+          cache: npm
+
+      - name: Install dependencies and build
+        run: npm ci && npm run build
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+
+      - name: Deploy Hosting preview
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ALUMNI_4291F }}
+          projectId: alumni-4291f
+
+  validate-firestore-rules:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.firestore == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate with Firebase
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ALUMNI_4291F }}' > /tmp/sa-key.json
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Validate Firestore rules (dry run)
+        run: firebase deploy --only firestore --project alumni-4291f --non-interactive --dry-run
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/sa-key.json
+
+  validate-storage-rules:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.storage == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate with Firebase
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ALUMNI_4291F }}' > /tmp/sa-key.json
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Validate Storage rules (dry run)
+        run: firebase deploy --only storage --project alumni-4291f --non-interactive --dry-run
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/sa-key.json
