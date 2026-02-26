@@ -169,7 +169,11 @@
     "emailInvalid": "Please enter a valid email address",
     "phoneRequired": "Please enter your phone number",
     "phoneInvalid": "Please enter a valid phone number",
-    "graduationYearRequired": "Please enter your graduation year"
+    "graduationYearRequired": "Please enter your graduation year",
+    "photo": "Profile Photo",
+    "changePhoto": "Change Photo",
+    "photoLimit": "JPG, PNG, WebP / max 500KB",
+    "imageTooLarge": "Image size exceeds 500KB."
   },
   "directory": {
     "title": "Alumni Directory",

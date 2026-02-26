@@ -38,7 +38,7 @@ service firebase.storage {
       allow read: if true;
       allow write: if isSignedIn()
         && request.auth.uid == uid
-        && request.resource.size < 2 * 1024 * 1024
+        && request.resource.size < 500 * 1024
         && isAllowedImageType();
     }
   }

@@ -169,7 +169,11 @@
     "emailInvalid": "올바른 이메일 형식을 입력해주세요",
     "phoneRequired": "연락처를 입력해주세요",
     "phoneInvalid": "올바른 연락처 형식을 입력해주세요",
-    "graduationYearRequired": "졸업 연도를 입력해주세요"
+    "graduationYearRequired": "졸업 연도를 입력해주세요",
+    "photo": "프로필 사진",
+    "changePhoto": "사진 변경",
+    "photoLimit": "JPG, PNG, WebP / 500KB 이하",
+    "imageTooLarge": "이미지 크기가 500KB를 초과합니다."
   },
   "directory": {
     "title": "동문 명부",

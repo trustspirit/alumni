@@ -1,10 +1,12 @@
 // src/pages/ProfilePage.tsx
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Container, Button, Input } from '@/components/common';
 import { useAuth } from '@/hooks/useAuth';
 import { updateUserProfile } from '@/lib/firestore';
+import { useImageUpload } from '@/hooks/useImageUpload';
+import { UPLOAD_LIMITS } from '@/constants';
 
 function isValidEmail(email: string): boolean {
   return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
@@ -36,6 +38,9 @@ function formatPhoneNumber(value: string): string {
 export default function ProfilePage() {
   const { t } = useTranslation();
   const { user, profile, refreshProfile } = useAuth();
+  const { upload, uploading, error: uploadError } = useImageUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const previewUrlRef = useRef<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -46,6 +51,8 @@ export default function ProfilePage() {
     linkedIn: '',
     graduationYear: '',
   });
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -61,8 +68,15 @@ export default function ProfilePage() {
         linkedIn: profile.linkedIn || '',
         graduationYear: profile.graduationYear || '',
       });
+      if (profile.profileImageUrl) setPreviewUrl(profile.profileImageUrl);
     }
   }, [profile]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    };
+  }, []);
 
   const validate = useCallback((): Record<string, string> => {
     const newErrors: Record<string, string> = {};
@@ -87,6 +101,24 @@ export default function ProfilePage() {
     setSuccess(false);
   }, []);
 
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > UPLOAD_LIMITS.profileImage) {
+      setErrors(prev => ({ ...prev, image: t('profile.imageTooLarge') }));
+      return;
+    }
+
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    const url = URL.createObjectURL(file);
+    previewUrlRef.current = url;
+    setPreviewUrl(url);
+    setPendingFile(file);
+    setErrors(prev => ({ ...prev, image: '' }));
+    setSuccess(false);
+  }, [t]);
+
   const handleSubmit = useCallback(async (e: FormEvent) => {
     e.preventDefault();
     const newErrors = validate();
@@ -98,6 +130,18 @@ export default function ProfilePage() {
 
     setSubmitting(true);
     try {
+      let profileImageUrl = profile?.profileImageUrl;
+
+      if (pendingFile) {
+        const result = await upload(`profiles/${user.uid}`, pendingFile, UPLOAD_LIMITS.profileImage);
+        if (!result) {
+          setSubmitting(false);
+          return;
+        }
+        profileImageUrl = result.url;
+        setPendingFile(null);
+      }
+
       await updateUserProfile(user.uid, {
         name: formData.name,
         email: formData.email,
@@ -106,6 +150,7 @@ export default function ProfilePage() {
         position: formData.position || undefined,
         linkedIn: formData.linkedIn || undefined,
         graduationYear: formData.graduationYear || undefined,
+        ...(profileImageUrl && { profileImageUrl }),
       });
       await refreshProfile();
       setSuccess(true);
@@ -114,7 +159,9 @@ export default function ProfilePage() {
     } finally {
       setSubmitting(false);
     }
-  }, [formData, user, validate, refreshProfile, t]);
+  }, [formData, user, profile, pendingFile, validate, refreshProfile, upload, t]);
+
+  const isBusy = submitting || uploading;
 
   const requiredFields = [
     { field: 'name', label: t('profile.name'), type: 'text', placeholder: '홍길동' },
@@ -142,7 +189,38 @@ export default function ProfilePage() {
           <div className="mt-4 rounded-lg bg-green-50 p-3 text-center text-sm text-green-600">{t('profile.updated')}</div>
         )}
 
+        <fieldset disabled={isBusy} className="disabled:opacity-60">
         <form onSubmit={handleSubmit} className="mt-8 space-y-6" noValidate>
+          {/* Profile Photo */}
+          <div className="flex flex-col items-center gap-3">
+            <div className="relative h-24 w-24 overflow-hidden rounded-full bg-gray-200">
+              {previewUrl ? (
+                <img src={previewUrl} alt={t('profile.photo')} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-byuh-crimson text-2xl font-bold text-white">
+                  {formData.name.charAt(0) || '?'}
+                </div>
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-sm font-medium text-byuh-crimson hover:text-byuh-crimson-dark"
+            >
+              {t('profile.changePhoto')}
+            </button>
+            <p className="text-xs text-text-secondary">{t('profile.photoLimit')}</p>
+            {errors.image && <p className="text-xs text-red-500">{errors.image}</p>}
+            {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
+          </div>
+
           <div className="space-y-4">
             <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-text-secondary">{t('profile.required')}</h2>
             {requiredFields.map(({ field, label, type, placeholder }) => (
@@ -179,10 +257,11 @@ export default function ProfilePage() {
             ))}
           </div>
 
-          <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? t('profile.saving') : t('profile.update')}
+          <Button type="submit" className="w-full" disabled={isBusy}>
+            {uploading ? t('events.uploading') : submitting ? t('profile.saving') : t('profile.update')}
           </Button>
         </form>
+        </fieldset>
       </Container>
     </div>
   );

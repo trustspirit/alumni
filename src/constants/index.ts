@@ -19,7 +19,7 @@ export const SECTION_IDS = {
 } as const;
 
 export const UPLOAD_LIMITS = {
-  profileImage: 2 * 1024 * 1024,
+  profileImage: 500 * 1024,
   eventImage: 600 * 1024,
   newsImage: 5 * 1024 * 1024,
   galleryImage: 10 * 1024 * 1024,
