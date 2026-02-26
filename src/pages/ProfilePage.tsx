@@ -68,9 +68,9 @@ export default function ProfilePage() {
         linkedIn: profile.linkedIn || '',
         graduationYear: profile.graduationYear || '',
       });
-      if (profile.profileImageUrl) setPreviewUrl(profile.profileImageUrl);
+      setPreviewUrl(profile.profileImageUrl || user?.photoURL || null);
     }
-  }, [profile]);
+  }, [profile, user]);
 
   useEffect(() => {
     return () => {

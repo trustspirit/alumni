@@ -94,6 +94,7 @@ export default function ProfileSetupPage() {
         ...(formData.company && { company: formData.company }),
         ...(formData.position && { position: formData.position }),
         ...(formData.linkedIn && { linkedIn: formData.linkedIn }),
+        ...(user.photoURL && { profileImageUrl: user.photoURL }),
         graduationYear: formData.graduationYear,
       });
       await refreshProfile();
