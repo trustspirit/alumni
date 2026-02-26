@@ -9,15 +9,34 @@ import { createUserProfile } from '@/lib/firestore';
 import { cn } from '@/lib/cn';
 
 function sanitizeInput(value: string): string {
-  return value.replace(/[<>]/g, '').trim();
+  return value.replace(/[<>]/g, '');
 }
 
 function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 }
 
 function isValidPhone(phone: string): boolean {
   return /^[\d\-+() ]{8,20}$/.test(phone);
+}
+
+function formatPhoneNumber(value: string): string {
+  const digits = value.replace(/\D/g, '');
+  if (digits.startsWith('82')) {
+    const local = digits.slice(2);
+    if (local.length <= 2) return `+82-${local}`;
+    if (local.length <= 6) return `+82-${local.slice(0, 2)}-${local.slice(2)}`;
+    return `+82-${local.slice(0, 2)}-${local.slice(2, 6)}-${local.slice(6, 10)}`;
+  }
+  if (digits.length <= 3) return digits;
+  if (digits.startsWith('02')) {
+    if (digits.length <= 5) return `${digits.slice(0, 2)}-${digits.slice(2)}`;
+    if (digits.length <= 9) return `${digits.slice(0, 2)}-${digits.slice(2, 5)}-${digits.slice(5)}`;
+    return `${digits.slice(0, 2)}-${digits.slice(2, 6)}-${digits.slice(6, 10)}`;
+  }
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  if (digits.length <= 10) return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
 }
 
 export default function ProfileSetupPage() {
@@ -57,8 +76,8 @@ export default function ProfileSetupPage() {
   }, [formData, t]);
 
   const handleChange = useCallback((field: string, value: string) => {
-    const sanitized = sanitizeInput(value);
-    setFormData(prev => ({ ...prev, [field]: sanitized }));
+    const formatted = field === 'phone' ? formatPhoneNumber(value) : sanitizeInput(value);
+    setFormData(prev => ({ ...prev, [field]: formatted }));
     setErrors(prev => ({ ...prev, [field]: '' }));
   }, []);
 
