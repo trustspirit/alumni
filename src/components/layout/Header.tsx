@@ -38,8 +38,8 @@ export const Header = memo(function Header() {
       <Container className="flex h-16 items-center justify-between md:h-20">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3" onClick={closeMenu}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-byuh-crimson text-sm font-bold text-white">
-            BH
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-byuh-crimson">
+            <img src="/images/byuh-monogram-white.png" alt="BYUH" className="h-7 w-7 object-contain" />
           </div>
           <span className="hidden font-heading text-lg font-bold text-text-primary sm:block">
             {SITE_NAME}

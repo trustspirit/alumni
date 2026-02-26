@@ -40,8 +40,8 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center py-20">
       <Container className="max-w-md text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-byuh-crimson text-xl font-bold text-white">
-          BH
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-byuh-crimson">
+          <img src="/images/byuh-monogram-white.png" alt="BYUH" className="h-11 w-11 object-contain" />
         </div>
         <h1 className="font-heading text-2xl font-bold">{SITE_NAME}</h1>
         <p className="mt-2 text-text-secondary">{t('auth.joinNetwork')}</p>
