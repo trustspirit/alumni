@@ -92,6 +92,17 @@ export function EventForm({ event, onSubmit, onCancel, submitting = false }: Eve
         error={errors.location}
         placeholder={t('events.locationPlaceholder')}
       />
+      {formData.location.trim().length >= 2 && (
+        <div className="overflow-hidden rounded-lg">
+          <iframe
+            title="Map preview"
+            src={`https://www.google.com/maps?q=${encodeURIComponent(formData.location)}&output=embed`}
+            className="h-48 w-full border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+      )}
 
       <Textarea
         id="event-description"
