@@ -1,17 +1,10 @@
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Container, SectionHeading } from '@/components/common';
-import { useAllUsers } from '@/hooks/useData';
+import { useLeadership } from '@/hooks/useData';
 
 export default function AboutPage() {
   const { t } = useTranslation();
-  const { data: allUsers = [] } = useAllUsers();
-
-  // Filter leadership (admin/manager) users
-  const leaders = useMemo(
-    () => allUsers.filter(u => u.role === 'admin' || u.role === 'manager'),
-    [allUsers],
-  );
+  const { data: leaders = [] } = useLeadership();
 
   return (
     <div className="py-20">

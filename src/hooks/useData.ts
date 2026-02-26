@@ -4,7 +4,7 @@ import {
   getEvents, createEvent, updateEvent, deleteEvent, rsvpEvent,
   getNews, createNews, updateNews, deleteNews,
   getGalleryImages, createGalleryImage, deleteGalleryImage,
-  getAllUsers, updateUserRole,
+  getLeadership, getAllUsers, updateUserRole,
 } from '@/lib/firestore';
 import { mainNavItems } from '@/data/navigation';
 import type { Event, NewsItem, GalleryImage, UserRole } from '@/types';
@@ -119,6 +119,14 @@ export function useDeleteGalleryImage() {
 }
 
 // ---- Users ----
+export function useLeadership() {
+  return useQuery({
+    queryKey: ['leadership'],
+    queryFn: getLeadership,
+    staleTime: STALE_TIMES.moderate,
+  });
+}
+
 export function useAllUsers() {
   return useQuery({
     queryKey: ['users'],

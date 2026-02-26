@@ -24,8 +24,8 @@ service cloud.firestore {
 
     // Users collection
     match /users/{uid} {
-      // Any signed-in user can read any user profile (for directory)
-      allow read: if isSignedIn();
+      // Public can read admin/manager profiles (leadership); signed-in users can read all
+      allow read: if isSignedIn() || resource.data.role in ['admin', 'manager'];
 
       // Users can create their own profile
       allow create: if isSignedIn() && isOwner(uid)

@@ -27,9 +27,11 @@ export const Header = memo(function Header() {
   }, [i18n]);
 
   // Filter nav items by role requirement
+  const roleHierarchy: Record<string, number> = { admin: 3, manager: 2, member: 1 };
   const visibleNavItems = navItems.filter(item => {
     if (!item.requiredRole) return true;
-    return !!profile;
+    if (!profile) return false;
+    return (roleHierarchy[profile.role] ?? 0) >= (roleHierarchy[item.requiredRole] ?? 0);
   });
 
   return (

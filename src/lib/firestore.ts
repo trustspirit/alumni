@@ -1,6 +1,6 @@
 import {
   collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
-  query, orderBy, Timestamp, arrayUnion, arrayRemove, setDoc,
+  query, orderBy, where, Timestamp, arrayUnion, arrayRemove, setDoc,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import type { UserProfile, Event, NewsItem, GalleryImage, UserRole } from '@/types';
@@ -22,6 +22,11 @@ export async function createUserProfile(uid: string, data: Omit<UserProfile, 'ui
 
 export async function updateUserProfile(uid: string, data: Omit<Partial<UserProfile>, 'role' | 'uid' | 'createdAt'>) {
   await updateDoc(doc(db, 'users', uid), { ...data, updatedAt: Timestamp.now() });
+}
+
+export async function getLeadership(): Promise<UserProfile[]> {
+  const snap = await getDocs(query(collection(db, 'users'), where('role', 'in', ['admin', 'manager']), orderBy('name')));
+  return snap.docs.map(d => ({ uid: d.id, ...d.data() }) as UserProfile);
 }
 
 export async function getAllUsers(): Promise<UserProfile[]> {

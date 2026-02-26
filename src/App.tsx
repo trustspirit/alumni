@@ -119,9 +119,11 @@ export default function App() {
                 path="/directory"
                 element={
                   <ProtectedRoute>
-                    <Suspense fallback={<PageLoader />}>
-                      <DirectoryPage />
-                    </Suspense>
+                    <RoleGuard roles={['admin', 'manager']}>
+                      <Suspense fallback={<PageLoader />}>
+                        <DirectoryPage />
+                      </Suspense>
+                    </RoleGuard>
                   </ProtectedRoute>
                 }
               />
