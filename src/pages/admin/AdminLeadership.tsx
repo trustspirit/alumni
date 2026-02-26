@@ -40,11 +40,23 @@ export default function AdminLeadership() {
 
   const handleAdd = useCallback(() => {
     if (!selectedUid || !title.trim()) return;
+    const user = usersMap.get(selectedUid);
+    if (!user) return;
     addMutation.mutate(
-      { uid: selectedUid, title: title.trim(), description: description.trim(), order: entries.length },
+      {
+        uid: selectedUid,
+        title: title.trim(),
+        description: description.trim(),
+        order: entries.length,
+        name: user.name,
+        ...(user.profileImageUrl && { profileImageUrl: user.profileImageUrl }),
+        ...(user.graduationYear && { graduationYear: user.graduationYear }),
+        ...(user.company && { company: user.company }),
+        ...(user.position && { position: user.position }),
+      },
       { onSuccess: () => { setIsAddOpen(false); resetForm(); } },
     );
-  }, [selectedUid, title, description, entries.length, addMutation, resetForm]);
+  }, [selectedUid, title, description, entries.length, addMutation, resetForm, usersMap]);
 
   const openEdit = useCallback((entry: LeadershipEntry) => {
     setEditingEntry(entry);

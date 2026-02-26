@@ -31,6 +31,12 @@ export interface LeadershipEntry {
   title: string;
   description: string;
   order: number;
+  // Denormalized user data for public display
+  name: string;
+  profileImageUrl?: string;
+  graduationYear?: string;
+  company?: string;
+  position?: string;
   createdAt: Timestamp;
 }
 

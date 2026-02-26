@@ -30,7 +30,7 @@ export const YouTubeBackground = memo(function YouTubeBackground({
       {/* Iframe: only mount after thumbnail is shown, fade in when ready */}
       {thumbReady && (
         <iframe
-          className={`pointer-events-none absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 scale-[1.2] object-cover transition-opacity duration-1000 md:h-auto md:w-[177.78vh] md:min-h-full md:min-w-full ${videoReady ? 'opacity-100' : 'opacity-0'}`}
+          className={`pointer-events-none absolute left-1/2 top-1/2 aspect-video min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover transition-opacity duration-1000 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
           src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1&vq=small`}
           title="Background video"
           allow="autoplay; encrypted-media"
