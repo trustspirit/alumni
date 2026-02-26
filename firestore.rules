@@ -50,9 +50,9 @@ service cloud.firestore {
       // Managers and admins can create/update/delete events
       allow create, delete: if isManager();
 
-      // Update: managers can update, OR signed-in users can only modify attendees
+      // Update: managers can update, OR signed-in users can only modify attendees/rsvpResponses
       allow update: if isManager()
-        || (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['attendees']));
+        || (isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['attendees', 'rsvpResponses']));
     }
 
     // News collection

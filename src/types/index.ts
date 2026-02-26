@@ -42,6 +42,8 @@ export interface Event {
   imageUrl: string;
   storagePath?: string;
   attendees: string[];
+  rsvpQuestions?: string[];
+  rsvpResponses?: Record<string, string[]>;
   createdBy: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;

@@ -54,8 +54,8 @@ export function useDeleteEvent() {
 export function useRsvpEvent() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ eventId, uid, attending }: { eventId: string; uid: string; attending: boolean }) =>
-      rsvpEvent(eventId, uid, attending),
+    mutationFn: ({ eventId, uid, attending, answers }: { eventId: string; uid: string; attending: boolean; answers?: string[] }) =>
+      rsvpEvent(eventId, uid, attending, answers),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['events'] }),
   });
 }

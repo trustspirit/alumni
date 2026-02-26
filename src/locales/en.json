@@ -62,6 +62,11 @@
     "preview": "Preview",
     "saving": "Saving...",
     "locationPlaceholder": "e.g., 123 Main St, Seoul, Korea",
+    "imageTooLarge": "Image size exceeds 600KB.",
+    "rsvpQuestions": "RSVP Questions",
+    "addQuestion": "Add Question",
+    "noQuestions": "No questions added. Only attendance will be collected.",
+    "questionPlaceholder": "e.g., How many people including companions?",
     "attendeeCount": "Attendees",
     "manage": "Manage",
     "validation": {

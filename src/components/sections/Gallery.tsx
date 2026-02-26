@@ -7,9 +7,10 @@ import { cn } from '@/lib/cn';
 
 interface GallerySectionProps {
   limit?: number;
+  showViewMore?: boolean;
 }
 
-export const Gallery = memo(function Gallery({ limit = 6 }: GallerySectionProps) {
+export const Gallery = memo(function Gallery({ limit = 6, showViewMore = true }: GallerySectionProps) {
   const { t } = useTranslation();
   const { data: allImages = [] } = useGallery();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -36,8 +37,8 @@ export const Gallery = memo(function Gallery({ limit = 6 }: GallerySectionProps)
         <SectionHeading
           title={t('gallery.title')}
           subtitle={t('gallery.subtitle')}
-          viewMoreLink="/gallery"
-          viewMoreLabel={t('common.viewMore')}
+          viewMoreLink={showViewMore ? '/gallery' : undefined}
+          viewMoreLabel={showViewMore ? t('common.viewMore') : undefined}
         />
         <div className="mb-8 flex flex-wrap justify-center gap-2">
           <button

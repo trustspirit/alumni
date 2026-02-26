@@ -1,10 +1,11 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Container, SectionHeading, Card, Button } from '@/components/common';
+import { Container, SectionHeading, Card, Button, Input, Modal } from '@/components/common';
 import { useEvents, useRsvpEvent } from '@/hooks/useData';
 import { useAuth } from '@/hooks/useAuth';
 import { SECTION_IDS } from '@/constants';
 import type { Timestamp } from 'firebase/firestore';
+import type { Event } from '@/types';
 
 function formatDate(ts: Timestamp, locale: string): string {
   return ts.toDate().toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
@@ -21,23 +22,46 @@ function getMapEmbedUrl(location: string): string {
 interface EventsSectionProps {
   limit?: number;
   showRsvp?: boolean;
+  showViewMore?: boolean;
 }
 
-export const Events = memo(function Events({ limit = 3, showRsvp = false }: EventsSectionProps) {
+export const Events = memo(function Events({ limit = 3, showRsvp = false, showViewMore = true }: EventsSectionProps) {
   const { t, i18n } = useTranslation();
   const { data: allEvents = [] } = useEvents();
   const { user } = useAuth();
   const rsvpMutation = useRsvpEvent();
+  const [rsvpModal, setRsvpModal] = useState<Event | null>(null);
+  const [rsvpAnswers, setRsvpAnswers] = useState<string[]>([]);
 
   const displayEvents = useMemo(
     () => allEvents.slice(0, limit),
     [allEvents, limit],
   );
 
-  const handleRsvp = (eventId: string, attending: boolean) => {
+  const handleRsvpClick = useCallback((event: Event) => {
     if (!user) return;
-    rsvpMutation.mutate({ eventId, uid: user.uid, attending });
-  };
+    const isAttending = event.attendees.includes(user.uid);
+
+    if (isAttending) {
+      rsvpMutation.mutate({ eventId: event.id, uid: user.uid, attending: false });
+      return;
+    }
+
+    if (event.rsvpQuestions && event.rsvpQuestions.length > 0) {
+      setRsvpAnswers(new Array(event.rsvpQuestions.length).fill(''));
+      setRsvpModal(event);
+    } else {
+      rsvpMutation.mutate({ eventId: event.id, uid: user.uid, attending: true });
+    }
+  }, [user, rsvpMutation]);
+
+  const handleRsvpSubmit = useCallback(() => {
+    if (!user || !rsvpModal) return;
+    rsvpMutation.mutate(
+      { eventId: rsvpModal.id, uid: user.uid, attending: true, answers: rsvpAnswers },
+      { onSuccess: () => setRsvpModal(null) },
+    );
+  }, [user, rsvpModal, rsvpAnswers, rsvpMutation]);
 
   return (
     <section id={SECTION_IDS.events} className="bg-surface py-20">
@@ -45,8 +69,8 @@ export const Events = memo(function Events({ limit = 3, showRsvp = false }: Even
         <SectionHeading
           title={t('events.title')}
           subtitle={t('events.subtitle')}
-          viewMoreLink="/events"
-          viewMoreLabel={t('common.viewMore')}
+          viewMoreLink={showViewMore ? '/events' : undefined}
+          viewMoreLabel={showViewMore ? t('common.viewMore') : undefined}
         />
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {displayEvents.map((event) => {
@@ -76,7 +100,7 @@ export const Events = memo(function Events({ limit = 3, showRsvp = false }: Even
                         <Button
                           variant={isAttending ? 'outline' : 'primary'}
                           size="sm"
-                          onClick={() => handleRsvp(event.id, !isAttending)}
+                          onClick={() => handleRsvpClick(event)}
                           disabled={rsvpMutation.isPending}
                         >
                           {isAttending ? t('events.cancelRsvp') : t('events.rsvp')}
@@ -93,6 +117,42 @@ export const Events = memo(function Events({ limit = 3, showRsvp = false }: Even
           })}
         </div>
       </Container>
+
+      <Modal
+        isOpen={!!rsvpModal}
+        onClose={() => setRsvpModal(null)}
+        title={t('events.rsvp')}
+      >
+        {rsvpModal?.rsvpQuestions && (
+          <div className="space-y-4">
+            {rsvpModal.rsvpQuestions.map((question, i) => (
+              <Input
+                key={i}
+                label={question}
+                value={rsvpAnswers[i] || ''}
+                onChange={(v) => setRsvpAnswers(prev => prev.map((old, j) => j === i ? v : old))}
+              />
+            ))}
+            <div className="flex gap-3 pt-2">
+              <Button
+                size="sm"
+                onClick={handleRsvpSubmit}
+                disabled={rsvpMutation.isPending}
+              >
+                {rsvpMutation.isPending ? t('events.saving') : t('events.rsvp')}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setRsvpModal(null)}
+                disabled={rsvpMutation.isPending}
+              >
+                {t('common.cancel')}
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </section>
   );
 });

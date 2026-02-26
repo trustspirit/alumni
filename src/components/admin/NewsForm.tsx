@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Input, Textarea } from '@/components/common';
@@ -20,6 +20,7 @@ export function NewsForm({ news, onSubmit, onCancel, submitting = false }: NewsF
   const { user } = useAuth();
   const { upload, uploading, error: uploadError } = useImageUpload();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const previewUrlRef = useRef<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: news?.title || '',
@@ -30,21 +31,33 @@ export function NewsForm({ news, onSubmit, onCancel, submitting = false }: NewsF
     storagePath: news?.storagePath || '',
     link: news?.link || '',
   });
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(news?.imageUrl || null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    };
+  }, []);
 
   const handleChange = useCallback((field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     setErrors(prev => ({ ...prev, [field]: '' }));
   }, []);
 
-  const handleImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const result = await upload('news', file, UPLOAD_LIMITS.newsImage);
-    if (result) setFormData(prev => ({ ...prev, imageUrl: result.url, storagePath: result.storagePath }));
-  }, [upload]);
 
-  const handleSubmit = useCallback((e: FormEvent) => {
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    const url = URL.createObjectURL(file);
+    previewUrlRef.current = url;
+    setPreviewUrl(url);
+    setPendingFile(file);
+  }, []);
+
+  const handleSubmit = useCallback(async (e: FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
     if (!formData.title) newErrors.title = t('news.validation.titleRequired');
@@ -55,19 +68,33 @@ export function NewsForm({ news, onSubmit, onCancel, submitting = false }: NewsF
       setErrors(newErrors);
       return;
     }
+
+    let imageUrl = formData.imageUrl;
+    let storagePath = formData.storagePath;
+
+    if (pendingFile) {
+      const result = await upload('news', pendingFile, UPLOAD_LIMITS.newsImage);
+      if (!result) return;
+      imageUrl = result.url;
+      storagePath = result.storagePath;
+    }
+
     onSubmit({
       title: formData.title,
       date: Timestamp.fromDate(new Date(formData.date)),
       summary: formData.summary,
       content: formData.content,
-      imageUrl: formData.imageUrl || '/images/placeholder.svg',
-      ...(formData.storagePath && { storagePath: formData.storagePath }),
+      imageUrl: imageUrl || '/images/placeholder.svg',
+      ...(storagePath && { storagePath }),
       createdBy: user?.uid || '',
       ...(formData.link && { link: formData.link }),
     });
-  }, [formData, onSubmit, user, t]);
+  }, [formData, pendingFile, onSubmit, user, upload, t]);
+
+  const isBusy = submitting || uploading;
 
   return (
+    <fieldset disabled={isBusy} className="disabled:opacity-60">
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       {[
         { field: 'title', label: t('news.newsTitle'), type: 'text' },
@@ -110,30 +137,32 @@ export function NewsForm({ news, onSubmit, onCancel, submitting = false }: NewsF
           id="news-image"
           type="file"
           accept="image/jpeg,image/png,image/webp"
-          onChange={handleImageUpload}
+          onChange={handleFileSelect}
           className="hidden"
-          disabled={uploading}
         />
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-text-secondary transition-colors hover:border-byuh-crimson hover:text-byuh-crimson disabled:opacity-50"
+          className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-text-secondary transition-colors hover:border-byuh-crimson hover:text-byuh-crimson"
         >
-          {uploading ? t('events.uploading') : t('events.chooseFile')}
+          {t('events.chooseFile')}
         </button>
+        {pendingFile && (
+          <span className="ml-2 text-xs text-text-secondary">{pendingFile.name}</span>
+        )}
         {uploadError && <p className="mt-1 text-xs text-red-500">{uploadError}</p>}
-        {formData.imageUrl && (
-          <img src={formData.imageUrl} alt={t('events.preview')} className="mt-2 h-32 w-full rounded-lg object-cover" />
+        {previewUrl && (
+          <img src={previewUrl} alt={t('events.preview')} className="mt-2 h-32 w-full rounded-lg object-cover" />
         )}
       </div>
 
       <div className="flex gap-3 pt-2">
-        <Button type="submit" size="sm" disabled={submitting || uploading}>
-          {submitting ? t('news.saving') : news ? t('common.edit') : t('common.create')}
+        <Button type="submit" size="sm" disabled={isBusy}>
+          {uploading ? t('events.uploading') : submitting ? t('news.saving') : news ? t('common.edit') : t('common.create')}
         </Button>
-        <Button type="button" variant="outline" size="sm" onClick={onCancel}>{t('common.cancel')}</Button>
+        <Button type="button" variant="outline" size="sm" onClick={onCancel} disabled={isBusy}>{t('common.cancel')}</Button>
       </div>
     </form>
+    </fieldset>
   );
 }

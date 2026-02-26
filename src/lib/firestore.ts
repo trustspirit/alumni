@@ -1,5 +1,5 @@
 import {
-  collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
+  collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, deleteField,
   query, orderBy, where, Timestamp, arrayUnion, arrayRemove, setDoc,
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -61,11 +61,19 @@ export async function deleteEvent(id: string) {
   await deleteDoc(doc(db, 'events', id));
 }
 
-export async function rsvpEvent(eventId: string, uid: string, attending: boolean) {
+export async function rsvpEvent(eventId: string, uid: string, attending: boolean, answers?: string[]) {
   const ref = doc(db, 'events', eventId);
-  await updateDoc(ref, {
-    attendees: attending ? arrayUnion(uid) : arrayRemove(uid),
-  });
+  if (attending) {
+    await updateDoc(ref, {
+      attendees: arrayUnion(uid),
+      ...(answers && { [`rsvpResponses.${uid}`]: answers }),
+    });
+  } else {
+    await updateDoc(ref, {
+      attendees: arrayRemove(uid),
+      [`rsvpResponses.${uid}`]: deleteField(),
+    });
+  }
 }
 
 // ---- News ----

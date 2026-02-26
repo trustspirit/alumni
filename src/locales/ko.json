@@ -62,6 +62,11 @@
     "preview": "미리보기",
     "saving": "저장 중...",
     "locationPlaceholder": "예: 서울특별시 강남구 테헤란로 123",
+    "imageTooLarge": "이미지 크기가 600KB를 초과합니다.",
+    "rsvpQuestions": "RSVP 질문",
+    "addQuestion": "질문 추가",
+    "noQuestions": "추가된 질문이 없습니다. 참석 여부만 받습니다.",
+    "questionPlaceholder": "예: 동반 참석자 포함 몇 명인가요?",
     "attendeeCount": "참석자",
     "manage": "관리",
     "validation": {
