@@ -23,7 +23,7 @@ export default function AboutPage() {
           <div className="mt-16">
             <h3 className="mb-10 text-center font-heading text-2xl font-bold">{t('about.leadership')}</h3>
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {entries.map((entry) => (
+              {entries.filter(e => e.name).map((entry) => (
                 <div key={entry.id} className="rounded-xl bg-surface p-6 text-center">
                   <div className="mx-auto h-32 w-32 overflow-hidden rounded-full bg-gray-200">
                     {entry.profileImageUrl ? (

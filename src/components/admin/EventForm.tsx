@@ -95,7 +95,7 @@ export function EventForm({ event, onSubmit, onCancel, submitting = false }: Eve
       description: formData.description,
       imageUrl: imageUrl || '/images/placeholder.svg',
       ...(storagePath && { storagePath }),
-      ...(filteredQuestions.length > 0 && { rsvpQuestions: filteredQuestions }),
+      rsvpQuestions: filteredQuestions,
       createdBy: user?.uid || '',
     });
   }, [formData, pendingFile, onSubmit, user, upload, t]);

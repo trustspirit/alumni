@@ -11,7 +11,7 @@ export const YouTubeBackground = memo(function YouTubeBackground({
 }: YouTubeBackgroundProps) {
   const [thumbReady, setThumbReady] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
-  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
   // Preload thumbnail
   useEffect(() => {
