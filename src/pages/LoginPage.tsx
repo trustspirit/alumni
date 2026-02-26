@@ -1,22 +1,25 @@
 // src/pages/LoginPage.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Container } from '@/components/common';
 import { GoogleSignInButton } from '@/components/auth';
 import { useAuth } from '@/hooks/useAuth';
 import { getUserProfile } from '@/lib/firestore';
-import { SITE_NAME } from '@/constants';
 
 export default function LoginPage() {
   const { t } = useTranslation();
-  const { signIn } = useAuth();
+  const { user, signIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const from = (location.state as { from?: Location })?.from?.pathname || '/';
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) navigate(from, { replace: true });
+  }, [user, navigate, from]);
 
   const handleSignIn = async () => {
     setLoading(true);
@@ -38,20 +41,41 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center py-20">
-      <Container className="max-w-md text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-byuh-crimson">
-          <img src="/images/byuh-monogram-white.png" alt="BYUH" className="h-11 w-11 object-contain" />
+    <div className="-mt-16 flex min-h-screen md:-mt-20">
+      {/* Left: Campus Image */}
+      <div
+        className="hidden bg-cover bg-center md:block md:w-1/2"
+        style={{ backgroundImage: "url('/images/byuh-welcome-center.jpg')" }}
+      />
+
+      {/* Right: Login Form */}
+      <div className="flex w-full flex-col items-center justify-center px-6 py-24 md:w-1/2 md:py-0">
+        <div className="w-full max-w-sm">
+          <img
+            src="/images/byuh-monogram-white.png"
+            alt="BYUH"
+            className="mx-auto h-16 object-contain brightness-0"
+          />
+          <h1 className="mt-4 text-center font-heading text-xl font-bold text-text-primary">
+            {t('auth.siteName')}
+          </h1>
+          <p className="mt-1 text-center text-sm text-text-secondary">
+            {t('auth.joinNetwork')}
+          </p>
+
+          {error && (
+            <p className="mt-6 text-center text-sm text-red-500">{error}</p>
+          )}
+
+          <div className="mt-10 flex justify-center">
+            <GoogleSignInButton onClick={handleSignIn} loading={loading} />
+          </div>
+
+          <p className="mt-10 text-center text-xs text-text-secondary/50">
+            {t('auth.universityName')}
+          </p>
         </div>
-        <h1 className="font-heading text-2xl font-bold">{SITE_NAME}</h1>
-        <p className="mt-2 text-text-secondary">{t('auth.joinNetwork')}</p>
-        {error && (
-          <p className="mt-4 text-sm text-red-500">{error}</p>
-        )}
-        <div className="mt-8 flex justify-center">
-          <GoogleSignInButton onClick={handleSignIn} loading={loading} />
-        </div>
-      </Container>
+      </div>
     </div>
   );
 }

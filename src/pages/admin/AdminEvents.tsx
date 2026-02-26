@@ -6,12 +6,12 @@ import { useEvents, useCreateEvent, useUpdateEvent, useDeleteEvent } from '@/hoo
 import type { Event } from '@/types';
 import type { Timestamp } from 'firebase/firestore';
 
-function formatDate(ts: Timestamp): string {
-  return ts.toDate().toLocaleDateString('ko-KR');
+function formatDate(ts: Timestamp, locale: string): string {
+  return ts.toDate().toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US');
 }
 
 export default function AdminEvents() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: events = [] } = useEvents();
   const createMutation = useCreateEvent();
   const updateMutation = useUpdateEvent();
@@ -57,7 +57,7 @@ export default function AdminEvents() {
               {events.map((event) => (
                 <tr key={event.id} className="border-b border-gray-100 hover:bg-surface">
                   <td className="px-4 py-3 font-medium">{event.title}</td>
-                  <td className="px-4 py-3 text-text-secondary">{formatDate(event.date)}</td>
+                  <td className="px-4 py-3 text-text-secondary">{formatDate(event.date, i18n.language)}</td>
                   <td className="px-4 py-3 text-text-secondary">{event.location}</td>
                   <td className="px-4 py-3 text-text-secondary">{event.attendees.length}</td>
                   <td className="flex gap-2 px-4 py-3">

@@ -5,3 +5,4 @@ export { SectionHeading } from './SectionHeading';
 export { ExternalLink } from './ExternalLink';
 export { Modal } from './Modal';
 export { LoadingSpinner } from './LoadingSpinner';
+export { YouTubeBackground } from './YouTubeBackground';

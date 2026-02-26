@@ -50,6 +50,9 @@ export default function ProfileSetupPage() {
     } else if (!isValidPhone(formData.phone)) {
       newErrors.phone = t('profile.phoneInvalid');
     }
+    if (!formData.graduationYear.trim()) {
+      newErrors.graduationYear = t('profile.graduationYearRequired');
+    }
     return newErrors;
   }, [formData, t]);
 
@@ -77,7 +80,7 @@ export default function ProfileSetupPage() {
         ...(formData.company && { company: formData.company }),
         ...(formData.position && { position: formData.position }),
         ...(formData.linkedIn && { linkedIn: formData.linkedIn }),
-        ...(formData.graduationYear && { graduationYear: formData.graduationYear }),
+        graduationYear: formData.graduationYear,
       });
       await refreshProfile();
       navigate('/', { replace: true });
@@ -92,10 +95,10 @@ export default function ProfileSetupPage() {
     { field: 'name', label: t('profile.name'), type: 'text', placeholder: '홍길동' },
     { field: 'email', label: t('profile.email'), type: 'email', placeholder: 'alumni@example.com' },
     { field: 'phone', label: t('profile.phone'), type: 'tel', placeholder: '010-1234-5678' },
+    { field: 'graduationYear', label: t('profile.graduationYear'), type: 'text', placeholder: '2020' },
   ];
 
   const optionalFields = [
-    { field: 'graduationYear', label: t('profile.graduationYear'), type: 'text', placeholder: '2020' },
     { field: 'company', label: t('profile.company'), type: 'text', placeholder: '' },
     { field: 'position', label: t('profile.position'), type: 'text', placeholder: '' },
     { field: 'linkedIn', label: t('profile.linkedIn'), type: 'url', placeholder: 'https://linkedin.com/in/...' },

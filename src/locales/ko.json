@@ -28,7 +28,7 @@
   },
   "hero": {
     "title1": "BYU-Hawaii",
-    "title2": "Alumni Korea Chapter",
+    "title2": "한국 동문회",
     "subtitle": "브리검영 대학교 하와이 한국 동문회에 오신 것을 환영합니다. 함께 연결하고, 나누고, 성장합시다.",
     "joinBtn": "동문 가입하기",
     "eventsBtn": "행사 보기"
@@ -124,14 +124,17 @@
     "quickLinks": "바로가기",
     "relatedLinks": "관련 링크",
     "donate": "기부하기",
-    "rights": "All rights reserved."
+    "byuhLink": "BYU-Hawaii",
+    "byuhAlumniLink": "BYU 동문회",
+    "rights": "모든 권리 보유."
   },
   "auth": {
     "signInGoogle": "Google로 로그인",
     "signingIn": "로그인 중...",
     "joinNetwork": "동문 네트워크에 참여하세요",
     "signInError": "로그인 중 오류가 발생했습니다. 다시 시도해주세요.",
-    "siteName": "BYUH Alumni Korea Chapter"
+    "siteName": "BYUH 한국 동문회",
+    "universityName": "브리검영 대학교 하와이"
   },
   "profile": {
     "setup": "프로필 설정",
@@ -157,13 +160,14 @@
     "emailRequired": "이메일을 입력해주세요",
     "emailInvalid": "올바른 이메일 형식을 입력해주세요",
     "phoneRequired": "연락처를 입력해주세요",
-    "phoneInvalid": "올바른 연락처 형식을 입력해주세요"
+    "phoneInvalid": "올바른 연락처 형식을 입력해주세요",
+    "graduationYearRequired": "졸업 연도를 입력해주세요"
   },
   "directory": {
     "title": "동문 명부",
     "subtitle": "총 {{count}}명의 동문이 등록되어 있습니다",
     "searchPlaceholder": "이름, 직장, 졸업 연도로 검색...",
-    "classOf": "Class of {{year}}"
+    "classOf": "{{year}}년 졸업"
   },
   "admin": {
     "dashboard": "관리자 대시보드",

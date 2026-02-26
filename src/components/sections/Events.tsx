@@ -6,8 +6,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { SECTION_IDS } from '@/constants';
 import type { Timestamp } from 'firebase/firestore';
 
-function formatDate(ts: Timestamp): string {
-  return ts.toDate().toLocaleDateString('ko-KR', {
+function formatDate(ts: Timestamp, locale: string): string {
+  return ts.toDate().toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -20,7 +20,7 @@ interface EventsSectionProps {
 }
 
 export const Events = memo(function Events({ limit = 3, showRsvp = false }: EventsSectionProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: allEvents = [] } = useEvents();
   const { user } = useAuth();
   const rsvpMutation = useRsvpEvent();
@@ -53,7 +53,7 @@ export const Events = memo(function Events({ limit = 3, showRsvp = false }: Even
                   title={event.title}
                   description={event.description}
                   imageUrl={event.imageUrl}
-                  meta={`${formatDate(event.date)} · ${event.location}`}
+                  meta={`${formatDate(event.date, i18n.language)} · ${event.location}`}
                 />
                 {showRsvp && user && (
                   <div className="mt-2 text-center">

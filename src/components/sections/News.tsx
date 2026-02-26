@@ -5,8 +5,8 @@ import { useNews } from '@/hooks/useData';
 import { SECTION_IDS } from '@/constants';
 import type { Timestamp } from 'firebase/firestore';
 
-function formatDate(ts: Timestamp): string {
-  return ts.toDate().toLocaleDateString('ko-KR', {
+function formatDate(ts: Timestamp, locale: string): string {
+  return ts.toDate().toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -18,7 +18,7 @@ interface NewsSectionProps {
 }
 
 export const News = memo(function News({ limit = 3 }: NewsSectionProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: allNews = [] } = useNews();
   const displayNews = useMemo(() => allNews.slice(0, limit), [allNews, limit]);
 
@@ -36,7 +36,7 @@ export const News = memo(function News({ limit = 3 }: NewsSectionProps) {
               title={item.title}
               description={item.summary}
               imageUrl={item.imageUrl}
-              meta={formatDate(item.date)}
+              meta={formatDate(item.date, i18n.language)}
               link={item.link}
             />
           ))}

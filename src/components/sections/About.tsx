@@ -15,7 +15,15 @@ export const About = memo(function About() {
           viewMoreLink="/about"
           viewMoreLabel={t('common.viewMore')}
         />
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto grid max-w-5xl items-center gap-10 md:grid-cols-2">
+          <div className="overflow-hidden rounded-2xl">
+            <img
+              src="/images/byuh-courtyard.jpg"
+              alt="BYUH McKay Complex Courtyard"
+              className="aspect-[4/3] w-full object-cover"
+              loading="lazy"
+            />
+          </div>
           <p className="text-lg leading-relaxed text-text-secondary">
             {t('about.description')}
           </p>

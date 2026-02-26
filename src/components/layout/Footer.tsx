@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Container, ExternalLink } from '@/components/common';
-import { SITE_NAME, EXTERNAL_LINKS } from '@/constants';
+import { EXTERNAL_LINKS } from '@/constants';
 
 export const Footer = memo(function Footer() {
   const { t } = useTranslation();
@@ -15,8 +15,8 @@ export const Footer = memo(function Footer() {
   ];
 
   const externalLinks = [
-    { label: 'BYU-Hawaii', href: EXTERNAL_LINKS.byuh },
-    { label: 'BYU Alumni', href: EXTERNAL_LINKS.byuhAlumni },
+    { label: t('footer.byuhLink'), href: EXTERNAL_LINKS.byuh },
+    { label: t('footer.byuhAlumniLink'), href: EXTERNAL_LINKS.byuhAlumni },
     { label: t('footer.donate'), href: EXTERNAL_LINKS.give },
   ];
 
@@ -25,7 +25,7 @@ export const Footer = memo(function Footer() {
       <Container className="py-12">
         <div className="grid gap-8 md:grid-cols-3">
           <div>
-            <h3 className="mb-4 font-heading text-lg font-bold">{SITE_NAME}</h3>
+            <h3 className="mb-4 font-heading text-lg font-bold">{t('auth.siteName')}</h3>
             <p className="text-sm leading-relaxed text-gray-300">
               {t('footer.description')}
             </p>
@@ -67,7 +67,7 @@ export const Footer = memo(function Footer() {
         </div>
 
         <div className="mt-10 border-t border-gray-700 pt-6 text-center text-sm text-gray-400">
-          &copy; {currentYear} {SITE_NAME}. {t('footer.rights')}
+          &copy; {currentYear} {t('auth.siteName')}. {t('footer.rights')}
         </div>
       </Container>
     </footer>

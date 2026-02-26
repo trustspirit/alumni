@@ -124,6 +124,8 @@
     "quickLinks": "Quick Links",
     "relatedLinks": "Related Links",
     "donate": "Donate",
+    "byuhLink": "BYU-Hawaii",
+    "byuhAlumniLink": "BYU Alumni",
     "rights": "All rights reserved."
   },
   "auth": {
@@ -131,7 +133,8 @@
     "signingIn": "Signing in...",
     "joinNetwork": "Join the alumni network",
     "signInError": "An error occurred while signing in. Please try again.",
-    "siteName": "BYUH Alumni Korea Chapter"
+    "siteName": "BYUH Alumni Korea Chapter",
+    "universityName": "Brigham Young University\u2013Hawai\u02BBi"
   },
   "profile": {
     "setup": "Profile Setup",
@@ -157,7 +160,8 @@
     "emailRequired": "Please enter your email",
     "emailInvalid": "Please enter a valid email address",
     "phoneRequired": "Please enter your phone number",
-    "phoneInvalid": "Please enter a valid phone number"
+    "phoneInvalid": "Please enter a valid phone number",
+    "graduationYearRequired": "Please enter your graduation year"
   },
   "directory": {
     "title": "Alumni Directory",

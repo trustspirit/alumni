@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Container } from '@/components/common';
 import { useNavigation } from '@/hooks/useData';
 import { useAuth } from '@/hooks/useAuth';
-import { SITE_NAME } from '@/constants';
 import { cn } from '@/lib/cn';
 
 export const Header = memo(function Header() {
@@ -34,15 +33,13 @@ export const Header = memo(function Header() {
   });
 
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 bg-byuh-crimson">
       <Container className="flex h-16 items-center justify-between md:h-20">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3" onClick={closeMenu}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-byuh-crimson">
-            <img src="/images/byuh-monogram-white.png" alt="BYUH" className="h-7 w-7 object-contain" />
-          </div>
-          <span className="hidden font-heading text-lg font-bold text-text-primary sm:block">
-            {SITE_NAME}
+          <img src="/images/byuh-monogram-white.png" alt="BYUH" className="h-9 object-contain md:h-11" />
+          <span className="hidden font-heading text-lg font-bold text-white sm:block">
+            {t('auth.siteName')}
           </span>
         </Link>
 
@@ -53,10 +50,10 @@ export const Header = memo(function Header() {
               key={item.href}
               to={item.href}
               className={cn(
-                'text-sm font-medium transition-colors hover:text-byuh-crimson',
+                'text-sm font-medium transition-colors hover:text-white',
                 location.pathname === item.href
-                  ? 'text-byuh-crimson'
-                  : 'text-text-secondary',
+                  ? 'text-white'
+                  : 'text-white/70',
               )}
             >
               {t(item.label)}
@@ -69,30 +66,30 @@ export const Header = memo(function Header() {
           <button
             type="button"
             onClick={toggleLanguage}
-            className="rounded-md px-2 py-1 text-xs font-medium text-text-secondary hover:bg-gray-100"
+            className="rounded-md px-2 py-1 text-xs font-medium text-white/70 hover:text-white hover:bg-white/10"
           >
             {i18n.language === 'ko' ? 'EN' : 'KR'}
           </button>
           {user ? (
             <>
               {hasRole(['admin', 'manager']) && (
-                <Link to="/admin" className="text-sm font-medium text-byuh-crimson hover:text-byuh-crimson-dark">
+                <Link to="/admin" className="text-sm font-medium text-byuh-gold-light hover:text-white">
                   {t('nav.admin')}
                 </Link>
               )}
-              <Link to="/profile" className="text-sm text-text-secondary hover:text-byuh-crimson">
+              <Link to="/profile" className="text-sm text-white/70 hover:text-white">
                 {profile?.name || t('nav.profile')}
               </Link>
               <button
                 type="button"
                 onClick={logout}
-                className="text-sm text-text-secondary hover:text-byuh-crimson"
+                className="text-sm text-white/70 hover:text-white"
               >
                 {t('nav.logout')}
               </button>
             </>
           ) : (
-            <Link to="/login" className="text-sm font-medium text-byuh-crimson hover:text-byuh-crimson-dark">
+            <Link to="/login" className="text-sm font-medium text-white hover:text-byuh-gold-light">
               {t('nav.login')}
             </Link>
           )}
@@ -101,7 +98,7 @@ export const Header = memo(function Header() {
         {/* Mobile Menu Button */}
         <button
           type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-text-primary transition-colors hover:bg-gray-100 md:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-white transition-colors hover:bg-white/10 md:hidden"
           onClick={toggleMenu}
           aria-label={isMobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
           aria-expanded={isMobileMenuOpen}
@@ -118,7 +115,7 @@ export const Header = memo(function Header() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="border-t border-gray-200 bg-white md:hidden">
+        <div className="border-t border-white/20 bg-white md:hidden">
           <Container>
             <nav className="flex flex-col py-4">
               {visibleNavItems.map((item) => (
